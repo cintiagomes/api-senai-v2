@@ -4,11 +4,18 @@ class ControllerPessoa{
 
     private $_method;
     private $_modelPessoa;
+    private $_codPessoa;
 
     public function __construct($model){
 
         $this->_modelPessoa = $model;
         $this->_method = $_SERVER['REQUEST_METHOD'];
+
+        //PERMITE RECEBER DADOS JSON ATRAVÉS DA REQUISIÇÃO
+        $json = file_get_contents("php://input");
+        $dadosPessoas = json_decode($json);
+
+        $this->_codPessoa = $dadosPessoas->cod_pessoa ?? null;
         
     }
 
@@ -17,12 +24,18 @@ class ControllerPessoa{
         switch ($this->_method) {
             case 'GET':
                 
+                if (isset($this->_codPessoa)) {
+                    return $this->_modelPessoa->findAll();
+                }
+
                 return $this->_modelPessoa->findAll();
 
                 break;
 
             case 'POST':
-                # code...
+                
+                return $this->_modelPessoa->create();
+
                 break;
                 
             case 'PUT':
